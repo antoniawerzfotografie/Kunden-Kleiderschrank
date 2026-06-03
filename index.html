@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Outfit-Finder · Antonia Werz Fotografie</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --brown: #a26a25;
+  --beige-warm: #ebe7e2;
+  --beige-light: #f5f1ec;
+  --white: #ffffff;
+  --text: #3a2e22;
+  --text-soft: #7a6a58;
+  --border: #ddd8d0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Jost', sans-serif; background: var(--beige-light); color: var(--text); min-height: 100vh; font-weight: 300; }
+
+/* Header */
+header { background: var(--white); border-bottom: 1px solid var(--border); padding: 28px 40px; text-align: center; }
+header .logo { font-family: 'Fraunces', serif; font-size: 11px; font-weight: 300; letter-spacing: 0.3em; text-transform: uppercase; color: var(--text-soft); margin-bottom: 8px; }
+header h1 { font-family: 'Fraunces', serif; font-weight: 300; font-size: clamp(26px, 4vw, 38px); color: var(--brown); letter-spacing: -0.01em; }
+header p { font-size: 13px; color: var(--text-soft); margin-top: 8px; font-weight: 300; letter-spacing: 0.04em; }
+
+/* Layout */
+main { max-width: 860px; margin: 0 auto; padding: 48px 24px 80px; }
+
+/* Steps */
+.step { background: var(--white); border: 1px solid var(--border); padding: 36px 40px; margin-bottom: 2px; opacity: 0; transform: translateY(16px); animation: fadeUp 0.5s forwards; }
+.step:nth-child(1){animation-delay:.05s}
+.step:nth-child(2){animation-delay:.12s}
+.step:nth-child(3){animation-delay:.19s}
+.step:nth-child(4){animation-delay:.26s}
+@keyframes fadeUp { to { opacity:1; transform:none; } }
+.step-header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 24px; }
+.step-num { font-family: 'Fraunces', serif; font-size: 38px; font-weight: 300; color: var(--beige-warm); line-height: 1; }
+.step-title { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 400; }
+.optional { font-family: 'Jost', sans-serif; font-size: 10px; font-weight: 300; letter-spacing: 0.1em; color: var(--text-soft); text-transform: uppercase; margin-left: 6px; }
+
+/* Palettes */
+.palette-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+@media(max-width:560px){ .palette-grid { grid-template-columns: repeat(2,1fr); } }
+.palette-card { border: 1.5px solid var(--border); border-radius: 2px; padding: 12px 10px 10px; cursor: pointer; transition: border-color .2s; background: var(--white); }
+.palette-card:hover { border-color: var(--brown); }
+.palette-card.selected { border-color: var(--brown); background: #fdf8f3; }
+.swatch-row { display: flex; gap: 3px; height: 38px; margin-bottom: 8px; }
+.swatch { flex: 1; border-radius: 1px; }
+.palette-name { font-size: 10px; font-weight: 400; color: var(--text); letter-spacing: 0.05em; text-transform: uppercase; text-align: center; }
+
+/* Style pills */
+.pill-group { display: flex; flex-wrap: wrap; gap: 10px; }
+.pill { padding: 9px 20px; border: 1px solid var(--border); background: var(--beige-light); font-family: 'Jost', sans-serif; font-size: 13px; font-weight: 300; color: var(--text-soft); cursor: pointer; letter-spacing: 0.04em; transition: all .18s; border-radius: 2px; }
+.pill:hover { border-color: var(--brown); color: var(--brown); }
+.pill.selected { background: var(--brown); border-color: var(--brown); color: white; }
+
+/* Budget */
+.budget-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+@media(max-width:560px){ .budget-grid { grid-template-columns: repeat(2,1fr); } }
+.budget-card { padding: 18px 12px; border: 1px solid var(--border); background: var(--beige-light); cursor: pointer; text-align: center; transition: all .18s; border-radius: 2px; }
+.budget-card:hover { border-color: var(--brown); }
+.budget-card.selected { background: var(--brown); border-color: var(--brown); color: white; }
+.budget-amount { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 300; display: block; }
+.budget-label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; opacity: .7; margin-top: 3px; display: block; }
+
+/* Persons */
+.add-person-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.add-btn { padding: 10px 18px; border: 1px dashed var(--border); background: none; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 300; color: var(--text-soft); cursor: pointer; letter-spacing: 0.06em; text-transform: uppercase; transition: all .18s; border-radius: 2px; }
+.add-btn:hover { border-color: var(--brown); color: var(--brown); }
+.persons-list { display: flex; flex-direction: column; gap: 10px; }
+.person-row { display: flex; align-items: center; gap: 12px; background: var(--beige-light); padding: 12px 16px; border-radius: 2px; animation: fadeUp .25s ease; }
+.person-tag { font-family: 'Fraunces', serif; font-size: 15px; color: var(--brown); flex: 1; }
+.person-row select { border: 1px solid var(--border); padding: 7px 10px; font-family: 'Jost', sans-serif; font-size: 13px; background: white; color: var(--text); border-radius: 2px; outline: none; }
+.remove-btn { background: none; border: none; color: var(--text-soft); cursor: pointer; font-size: 18px; transition: color .15s; }
+.remove-btn:hover { color: var(--brown); }
+
+/* CTA */
+.cta-btn { display: block; width: 100%; background: var(--brown); color: white; border: none; padding: 20px; font-family: 'Fraunces', serif; font-size: 18px; font-weight: 300; letter-spacing: 0.08em; cursor: pointer; margin-top: 32px; transition: background .2s; border-radius: 2px; }
+.cta-btn:hover { background: #8a5a1e; }
+.cta-btn:disabled { background: #c0aa8e; cursor: not-allowed; }
+.all-btn { display: block; width: 100%; background: transparent; color: var(--brown); border: 1.5px solid var(--brown); padding: 14px; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 400; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; margin-top: 10px; transition: all .25s; border-radius: 2px; }
+.all-btn:hover { background: var(--brown); color: white; }
+
+/* Results */
+#results { margin-top: 60px; }
+.results-title { font-family: 'Fraunces', serif; font-weight: 300; font-size: 26px; color: var(--text); margin-bottom: 6px; padding-bottom: 14px; border-bottom: 1px solid var(--border); margin-bottom: 28px; }
+
+/* Wardrobe cards */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin-bottom: 40px; }
+.wardrobe-card { background: var(--white); border: 1px solid var(--border); border-radius: 2px; overflow: hidden; transition: transform .2s, box-shadow .2s; animation: fadeUp .35s ease both; }
+.wardrobe-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.07); }
+.wardrobe-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
+.wc-body { padding: 12px 14px 14px; }
+.match-badge { display: inline-block; background: #f3ebe0; color: var(--brown); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 8px; border-radius: 100px; margin-bottom: 6px; }
+.wc-name { font-family: 'Fraunces', serif; font-size: 14px; font-weight: 400; margin-bottom: 3px; color: var(--text); }
+.wc-farbe { font-size: 11px; color: var(--text-soft); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 3px; }
+.wc-size { font-size: 12px; color: var(--brown); }
+
+/* Accessories */
+.acc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-bottom: 40px; }
+.acc-card { background: var(--white); border: 1px solid var(--border); border-radius: 2px; overflow: hidden; animation: fadeUp .3s ease both; }
+.acc-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; }
+.acc-body { padding: 10px 12px 12px; }
+.acc-name { font-family: 'Fraunces', serif; font-size: 13px; color: var(--text); margin-bottom: 2px; }
+.acc-farbe { font-size: 11px; color: var(--text-soft); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 2px; }
+.acc-size { font-size: 11px; color: var(--brown); }
+
+/* Online button */
+.online-btn { border: 1.5px solid var(--brown); background: transparent; color: var(--brown); padding: 16px 36px; font-family: 'Jost', sans-serif; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all .25s; border-radius: 2px; display: flex; align-items: center; gap: 12px; margin-top: 32px; }
+.online-btn:hover { background: var(--brown); color: white; }
+
+/* Online results */
+.divider { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+.person-block { background: var(--white); border: 1px solid var(--border); padding: 28px 32px; margin-bottom: 2px; animation: fadeUp .4s ease both; }
+.person-block-title { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 400; margin-bottom: 4px; }
+.person-block-sub { font-size: 12px; color: var(--text-soft); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 20px; }
+.outfit-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--beige-warm); }
+.outfit-item:last-child { border-bottom: none; }
+.outfit-icon { width: 38px; height: 38px; background: var(--beige-light); border-radius: 2px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.outfit-info { flex: 1; }
+.outfit-name { font-weight: 400; font-size: 14px; margin-bottom: 2px; }
+.outfit-desc { font-size: 12px; color: var(--text-soft); margin-bottom: 8px; line-height: 1.6; }
+.shop-links { display: flex; flex-wrap: wrap; gap: 6px; }
+.shop-link { font-size: 11px; color: var(--brown); border: 1px solid var(--brown); padding: 3px 10px; border-radius: 100px; text-decoration: none; letter-spacing: .05em; transition: all .2s; }
+.shop-link:hover { background: var(--brown); color: white; }
+
+/* Tips */
+.tips-block { background: var(--beige-warm); padding: 32px 36px; margin-top: 40px; animation: fadeUp .4s ease both; }
+.tips-title { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 400; margin-bottom: 20px; font-style: italic; color: var(--brown); }
+.tip-item { display: flex; gap: 14px; margin-bottom: 14px; align-items: flex-start; }
+.tip-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--brown); margin-top: 8px; flex-shrink: 0; }
+.tip-text { font-size: 14px; line-height: 1.7; color: var(--text); }
+
+/* Actions */
+.action-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 36px; }
+.action-btn { flex: 1; min-width: 160px; padding: 16px 20px; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all .2s; border-radius: 2px; text-align: center; }
+.action-btn.primary { background: var(--brown); color: white; border: none; }
+.action-btn.primary:hover { background: #8a5a1e; }
+.action-btn.secondary { background: transparent; color: var(--brown); border: 1.5px solid var(--brown); }
+.action-btn.secondary:hover { background: var(--brown); color: white; }
+
+/* Loading */
+.loading-bar { height: 2px; background: var(--border); border-radius: 1px; overflow: hidden; margin: 20px 0; }
+.loading-progress { height: 100%; background: var(--brown); border-radius: 1px; animation: loadAnim 1.5s ease-in-out infinite; }
+@keyframes loadAnim { 0%{width:0;margin-left:0} 50%{width:60%;margin-left:20%} 100%{width:0;margin-left:100%} }
+.spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.3); border-top-color: white; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.error-msg { background: #fdf0e8; border: 1px solid #e8c4a0; padding: 16px 20px; border-radius: 2px; font-size: 13px; color: var(--text); margin-top: 16px; }
+
+/* Toast */
+.toast { position: fixed; bottom: 28px; right: 28px; background: var(--text); color: white; padding: 14px 22px; font-size: 13px; font-family: 'Jost', sans-serif; letter-spacing: .06em; opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 1000; border-radius: 2px; }
+.toast.show { opacity: 1; }
+
+@media print {
+  header, .step, .cta-btn, .all-btn, .action-row, .online-btn, .add-btn, .remove-btn { display: none !important; }
+  body { background: white; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Antonia Werz Fotografie</div>
+  <h1>Outfit-Finder</h1>
+  <p>Finde das perfekte Shooting-Outfit für deine Familie</p>
+</header>
+
+<main>
+
+  <!-- 01 Farbpalette -->
+  <div class="step">
+    <div class="step-header">
+      <span class="step-num">01</span>
+      <span class="step-title">Farbpalette wählen</span>
+    </div>
+    <div class="palette-grid" id="paletteGrid"></div>
+  </div>
+
+  <!-- 02 Stil -->
+  <div class="step">
+    <div class="step-header">
+      <span class="step-num">02</span>
+      <span class="step-title">Stilrichtung wählen <span class="optional">optional</span></span>
+    </div>
+    <div class="pill-group" id="styleGroup">
+      <button class="pill" data-style="Boho & Natur">Boho & Natur</button>
+      <button class="pill" data-style="Romantisch & Verspielt">Romantisch & Verspielt</button>
+      <button class="pill" data-style="Elegant & Zeitlos">Elegant & Zeitlos</button>
+      <button class="pill" data-style="Rustikal & Warm">Rustikal & Warm</button>
+      <button class="pill" data-style="Minimalistisch & Modern">Minimalistisch & Modern</button>
+      <button class="pill" data-style="Dramatisch & Ausdrucksstark">Dramatisch & Ausdrucksstark</button>
+    </div>
+  </div>
+
+  <!-- 03 Budget -->
+  <div class="step">
+    <div class="step-header">
+      <span class="step-num">03</span>
+      <span class="step-title">Budget pro Person <span class="optional">optional</span></span>
+    </div>
+    <div class="budget-grid">
+      <div class="budget-card" data-budget="30" onclick="selectBudget(this)">
+        <span class="budget-amount">bis 30 €</span><span class="budget-label">Bewusst</span>
+      </div>
+      <div class="budget-card" data-budget="50" onclick="selectBudget(this)">
+        <span class="budget-amount">bis 50 €</span><span class="budget-label">Entspannt</span>
+      </div>
+      <div class="budget-card" data-budget="100" onclick="selectBudget(this)">
+        <span class="budget-amount">bis 100 €</span><span class="budget-label">Komfortabel</span>
+      </div>
+      <div class="budget-card" data-budget="200" onclick="selectBudget(this)">
+        <span class="budget-amount">bis 200 €</span><span class="budget-label">Premium</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 Personen -->
+  <div class="step">
+    <div class="step-header">
+      <span class="step-num">04</span>
+      <span class="step-title">Personen hinzufügen <span class="optional">optional</span></span>
+    </div>
+    <div class="add-person-grid">
+      <button class="add-btn" onclick="addPerson('Mama')">+ Mama</button>
+      <button class="add-btn" onclick="addPerson('Papa')">+ Papa</button>
+      <button class="add-btn" onclick="addPerson('Kind')">+ Kind</button>
+      <button class="add-btn" onclick="addPerson('Schwanger')">+ Schwanger</button>
+      <button class="add-btn" onclick="addPerson('Baby')">+ Baby</button>
+    </div>
+    <div class="persons-list" id="personsList"></div>
+  </div>
+
+  <button class="cta-btn" id="findBtn" onclick="findOutfits()">✦ Outfits finden</button>
+  <button class="all-btn" onclick="showAllWardrobe()">Alle Kleider anzeigen</button>
+
+  <!-- Results -->
+  <div id="results" style="display:none">
+    <div id="wardrobeSection"></div>
+    <div id="onlineSection"></div>
+    <div id="tipsSection"></div>
+    <div class="action-row" id="actionRow" style="display:none">
+      <button class="action-btn primary" onclick="copyResults()">Ergebnis kopieren</button>
+      <button class="action-btn secondary" onclick="window.print()">Als PDF speichern</button>
+    </div>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Paletten ──
+const PALETTES = [
+  { name: "Weiß · Creme · Hellbeige",      colors: ["#ffffff","#f5f1ec","#ebe7e2","#d8d0c8"], keywords: ["weiß","creme","ivory","hellbeige","zart","off-white","pearl"] },
+  { name: "Creme · Sand · Karamell",        colors: ["#f5ede0","#e8d5b5","#c8a870","#8b6b47"], keywords: ["creme","beige","camel","karamell","sand","natur","ocker","warm"] },
+  { name: "Altrosa · Nude · Creme",         colors: ["#d4a0a0","#e8c5b5","#f0e0d0","#c89090"], keywords: ["rosa","altrosa","nude","lachs","blush","apricot","creme","mauve"] },
+  { name: "Altrosa · Salbei · Creme",       colors: ["#c89090","#9aab88","#f0ece0","#d4b896"], keywords: ["rosa","altrosa","salbei","sage","grün","creme","zartrosa","natur"] },
+  { name: "Grün · Salbei · Weiß",           colors: ["#7a8c6a","#b5c4a5","#d8e0d0","#f0f0ea"], keywords: ["grün","salbei","sage","olive","mint","weiß","creme","natur"] },
+  { name: "Salbei · Creme · Braun",         colors: ["#9aab88","#f0ece0","#c8b89a","#7a5a3a"], keywords: ["salbei","sage","grün","creme","braun","natur","olive","beige"] },
+  { name: "Petrol · Creme · Sand",          colors: ["#2a6060","#f0ece0","#e0d0b0","#1a4848"], keywords: ["petrol","teal","dunkelgrün","blaugrün","grün","creme","sand","türkis"] },
+  { name: "Beige · Braun · Creme",          colors: ["#f0e8dc","#d4b896","#a07850","#6b4a2a"], keywords: ["beige","braun","creme","camel","sand","karamell","natur","ocker"] },
+  { name: "Olive · Khaki · Braun",          colors: ["#7a8c5a","#5a6840","#8b6b47","#c8b89a"], keywords: ["olive","khaki","grün","braun","natur","wald","sage","salbei","erde"] },
+  { name: "Rost · Braun · Khaki · Beige",   colors: ["#c06020","#7a5a3a","#8a8060","#e0d0b0"], keywords: ["rost","braun","khaki","beige","ocker","natur","karamell","sand"] },
+  { name: "Rost · Ocker · Senf",            colors: ["#c06020","#d4952a","#b87a18","#e8b060"], keywords: ["rost","ocker","senf","amber","gold","terrakotta","orange","kupfer"] },
+  { name: "Olive · Rost · Ocker",           colors: ["#6a7a4a","#c06020","#d4952a","#8b6b47"], keywords: ["olive","rost","ocker","khaki","braun","senf","natur","amber"] },
+  { name: "Beere · Rost · Braun",           colors: ["#8b3a3a","#c06020","#6b2a20","#d4952a"], keywords: ["beere","rost","bordeaux","dunkelrot","weinrot","braun","marsala","terrakotta"] },
+  { name: "Dunkel · Schokolade · Karamell", colors: ["#3a2218","#5a3828","#8b5a38","#c8a070"], keywords: ["dunkel","schokolade","espresso","mokka","braun","dunkelbraun","karamell"] },
+  { name: "Senf · Beere · Olive · Rost",    colors: ["#c8a018","#8b3a5a","#6a7a4a","#c06020"], keywords: ["senf","beere","olive","rost","ocker","bordeaux","grün","orange"] },
+];
+
+// ── Kleiderschrank ──
+const WARDROBE = [
+  // Frauenkleider
+  { name: "Wild Spirit", farbe: "Weiß · Fließend", tags: ["weiß","creme"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/A7404352.jpg" },
+  { name: "Pure Soul Mix & Match", farbe: "Grün · Weiß", tags: ["grün","weiß","sage"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC4073sw.jpg" },
+  { name: "Agnes natur", farbe: "Beige · Natur", tags: ["beige","natur","creme"], kat: ["Mama","Schwanger"], gr: "S – L", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/IMG_5119.jpg" },
+  { name: "Maria", farbe: "Creme · Beige", tags: ["creme","beige"], kat: ["Mama","Schwanger"], gr: "S – L", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC01987.jpg" },
+  { name: "Kleid burgund", farbe: "Burgund", tags: ["burgund","weinrot","dunkelrot","beere"], kat: ["Mama"], gr: "S – M", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_9512.jpg" },
+  { name: "Weltentänzer", farbe: "Rot", tags: ["rot","rost"], kat: ["Mama"], gr: "S – M", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5148.jpg" },
+  { name: "Hosenanzug nude", farbe: "Nude", tags: ["nude","beige","creme"], kat: ["Mama"], gr: "S – L", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/06/DSC04184.jpg" },
+  { name: "Set White", farbe: "Weiß", tags: ["weiß","creme"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC04433_1.jpg" },
+  { name: "Strickpullover dunkelbraun", farbe: "Dunkelbraun", tags: ["braun","dunkelbraun"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5189.jpg" },
+  // Frau & Babybauch
+  { name: "Octavia", farbe: "Beige · Blumen", tags: ["beige","natur","creme"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC09641.jpg" },
+  { name: "Leila", farbe: "Taupe · Grau", tags: ["grau","taupe"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/PB270049.jpg" },
+  { name: "Samty", farbe: "Senfgelb · Gold", tags: ["ocker","amber","gold","senf"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/PA020962.jpg" },
+  { name: "Selena", farbe: "Dunkelbraun", tags: ["braun","dunkelbraun"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/PB270276.jpg" },
+  { name: "Vera", farbe: "Khaki · Olive", tags: ["khaki","olive","grün","natur"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/PA021491.jpg" },
+  { name: "Carmen", farbe: "Weiß · Creme", tags: ["weiß","creme"], kat: ["Mama","Schwanger"], gr: "S – XXL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC03157.jpg" },
+  { name: "Naomi", farbe: "Altrosa", tags: ["rosa","altrosa","nude","lachs"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5748.jpg" },
+  { name: "Veronika", farbe: "Rost · Orange", tags: ["rost","orange","terrakotta"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/06/Katharina-Marina-Babybauch74.jpg" },
+  { name: "Aurora Beere", farbe: "Beere · Weinrot", tags: ["beere","weinrot","bordeaux","burgund"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC02797.jpg" },
+  { name: "Aurora Blau", farbe: "Hellblau", tags: ["blau","hellblau","teal"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC08692.jpg" },
+  { name: "Aria", farbe: "Dunkelgrün · Petrol", tags: ["grün","dunkelgrün","petrol","teal"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC03659.jpg" },
+  { name: "Bella", farbe: "Orange", tags: ["orange","rost","terrakotta"], kat: ["Mama","Schwanger"], gr: "M – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/Katharina-Marina-Babybauch87.jpg" },
+  { name: "Helene rost", farbe: "Rost", tags: ["rost","orange"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5163.jpg" },
+  { name: "Helene braun", farbe: "Karamell · Braun", tags: ["braun","karamell"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5162.jpg" },
+  { name: "Helene grün", farbe: "Salbei · Grün", tags: ["grün","salbei","sage"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5164.jpg" },
+  { name: "Helene creme", farbe: "Creme", tags: ["creme","weiß","beige"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5161.jpg" },
+  { name: "Betty", farbe: "Weiß · Spitze", tags: ["weiß","creme"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC03147.jpg" },
+  { name: "Alina", farbe: "Hellgrau · Blau", tags: ["grau","blau"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC00354.jpg" },
+  { name: "Annika", farbe: "Rosa · Nude", tags: ["rosa","nude","altrosa"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC2773.jpg" },
+  { name: "Celeste", farbe: "Gold", tags: ["gold","ocker","amber"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/aaa6a0bc-1c5f-44ba-94d1-f57d09c6c084.jpg" },
+  { name: "Madlen", farbe: "Fließend · Beige", tags: ["beige","natur","creme"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5160.jpg" },
+  { name: "Schlauchkleid dunkelgrün", farbe: "Dunkelgrün", tags: ["grün","dunkelgrün","petrol"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC3223.jpg" },
+  { name: "Tüllkleid flieder", farbe: "Flieder", tags: ["flieder","rosa","lila","altrosa"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC2834.jpg" },
+  { name: "Tüll Braun", farbe: "Braun · Fließend", tags: ["braun","karamell"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/Antonia-Werz-Fotograf-Babybauch-Schwangeschaft-Shooting-87.jpg" },
+  { name: "Tüll Grau", farbe: "Grau", tags: ["grau","taupe"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/Antonia_Werz_Fotografie_Maternity_1.jpg" },
+  { name: "Tüll Rot", farbe: "Rot", tags: ["rot","rost","beere"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_9021.jpg" },
+  { name: "Tüll Rosa", farbe: "Rosa · Nude", tags: ["rosa","nude","altrosa"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC01739.jpg" },
+  { name: "Tüll Blau", farbe: "Navy Blau", tags: ["blau","navy","dunkelblau"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC03278.jpg" },
+  { name: "Tüll Weiß", farbe: "Weiß", tags: ["weiß","creme"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC02739.jpg" },
+  { name: "Tüll Apricot", farbe: "Apricot", tags: ["apricot","rosa","nude","altrosa"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_9023.jpg" },
+  { name: "Body Weiß", farbe: "Weiß", tags: ["weiß","creme"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC04188.jpg" },
+  { name: "Body Schwarz", farbe: "Schwarz", tags: ["dunkel","schwarz"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC01151sw.jpg" },
+  { name: "Set Black", farbe: "Schwarz", tags: ["dunkel","schwarz"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC01488.jpg" },
+  { name: "Kimono Salbei", farbe: "Salbei · Grün", tags: ["grün","salbei","sage"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC08346.jpg" },
+  { name: "Kimono Gold", farbe: "Gold", tags: ["gold","ocker","amber"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC01374.jpg" },
+  { name: "Kimono weiß", farbe: "Weiß", tags: ["weiß","creme"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC04213.jpg" },
+  { name: "Silber", farbe: "Silber", tags: ["silber","grau"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC01093.jpg" },
+  { name: "Strickpulli camel", farbe: "Camel", tags: ["beige","camel","karamell"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5165.jpg" },
+  { name: "Strickpulli rost", farbe: "Rost", tags: ["rost","orange"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5166.jpg" },
+  { name: "Strickpulli stone", farbe: "Stone", tags: ["grau","beige"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5175.jpg" },
+  { name: "Strickpulli braun", farbe: "Braun", tags: ["braun"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5176.jpg" },
+  { name: "Strickjacke khaki", farbe: "Khaki", tags: ["khaki","grün","olive"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5169.jpg" },
+  { name: "Strickjacke weiß", farbe: "Weiß", tags: ["weiß","creme"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5173.jpg" },
+  { name: "Strickjacke dunkelbraun", farbe: "Dunkelbraun", tags: ["braun","dunkelbraun"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_9601.jpg" },
+  { name: "Strickmantel khaki", farbe: "Khaki", tags: ["khaki","grün","olive"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5171.jpg" },
+  { name: "Julia", farbe: "Khaki", tags: ["khaki","grün","olive"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5168.jpg" },
+  // Männer
+  { name: "Hemd rubin", farbe: "Rubin", tags: ["rot","burgund","beere"], kat: ["Papa"], gr: "M", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5275.jpg" },
+  { name: "Musselin Shirt dunkelbraun", farbe: "Dunkelbraun", tags: ["braun","dunkelbraun"], kat: ["Papa"], gr: "M", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_9977.jpg" },
+  { name: "Musselin Shirt creme", farbe: "Creme", tags: ["creme","weiß","beige"], kat: ["Papa"], gr: "M, L", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_9598.jpg" },
+  { name: "Strickpulli stone Mann", farbe: "Stone", tags: ["grau","beige"], kat: ["Papa"], gr: "M", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5167.jpg" },
+  { name: "Jacke khaki", farbe: "Khaki", tags: ["khaki","grün","olive"], kat: ["Papa"], gr: "L", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5278.jpg" },
+  { name: "Jacke braun", farbe: "Braun", tags: ["braun"], kat: ["Papa"], gr: "Gr. 42", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/46b295353aac43b7b87fe9fb8392951d-1.webp" },
+  { name: "Lederjacke warm", farbe: "Braun", tags: ["braun","karamell"], kat: ["Papa"], gr: "L", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5147.jpg" },
+  // Kinder
+  { name: "Ophelia", farbe: "Natur · Spitze", tags: ["weiß","creme","natur"], kat: ["Kind"], gr: "110/116, 122/128", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC02964.jpg" },
+  { name: "Musselinkleid creme", farbe: "Creme", tags: ["creme","weiß","beige"], kat: ["Kind"], gr: "104", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC00764.jpg" },
+  { name: "Tüllkleid weiß", farbe: "Weiß", tags: ["weiß","creme"], kat: ["Kind"], gr: "92, 104", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC2814.jpg" },
+  { name: "Tüllkleid burgund", farbe: "Burgund", tags: ["burgund","weinrot","beere"], kat: ["Kind"], gr: "104", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC2807.jpg" },
+  { name: "Veronika Kind", farbe: "Natur", tags: ["natur","beige","creme"], kat: ["Kind"], gr: "92", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC2804.jpg" },
+  { name: "Leinenkleid sand", farbe: "Sand", tags: ["beige","sand","natur"], kat: ["Kind"], gr: "74", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5202.jpg" },
+  { name: "Musselinkleid stone", farbe: "Stone", tags: ["grau","beige"], kat: ["Kind"], gr: "110/116", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_9522.jpg" },
+  { name: "Musselinkleid rost", farbe: "Rost", tags: ["rost","orange"], kat: ["Kind"], gr: "92", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/a1cff5bc-a0ef-418a-afc0-f769b0efebab.jpg" },
+  { name: "Musselinkleid graublau", farbe: "Graublau", tags: ["grau","blau"], kat: ["Kind"], gr: "98", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_9526.jpg" },
+  { name: "Musselinkleid hellgrün", farbe: "Hellgrün", tags: ["grün","salbei"], kat: ["Kind"], gr: "92", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_9525.jpg" },
+  { name: "Streifenkleid creme", farbe: "Creme/Weiß", tags: ["weiß","creme","beige"], kat: ["Kind"], gr: "122, 146", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/477c988395bb41f0bac82b094e208e87-1.webp" },
+  { name: "Cordkleid senf", farbe: "Senf", tags: ["ocker","senf","amber"], kat: ["Kind"], gr: "122/128", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5179.jpg" },
+  { name: "Kleid braun", farbe: "Braun", tags: ["braun"], kat: ["Kind"], gr: "122/128", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5178.jpg" },
+  { name: "Leinenkleid braun", farbe: "Braun", tags: ["braun","karamell"], kat: ["Kind"], gr: "110", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5196.jpg" },
+  { name: "Leinenkleid grün", farbe: "Grün", tags: ["grün","olive","salbei"], kat: ["Kind"], gr: "80", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5206.jpg" },
+  { name: "Leinenkleid creme", farbe: "Creme", tags: ["creme","weiß","beige"], kat: ["Kind"], gr: "92", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5209.jpg" },
+  { name: "Strickkleid sand", farbe: "Sand", tags: ["beige","sand","natur"], kat: ["Kind"], gr: "104", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5199.jpg" },
+  { name: "Wollkleid weiß", farbe: "Weiß", tags: ["weiß","creme"], kat: ["Kind"], gr: "62", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5211.jpg" },
+  { name: "Kleid dunkelrot kariert", farbe: "Dunkelrot", tags: ["rot","dunkelrot","beere","burgund"], kat: ["Kind"], gr: "86", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5210.jpg" },
+];
+
+// ── Schuhe ──
+const SCHUHE = [
+  { name: "Schuhe braun", farbe: "Braun", tags: ["braun","natur"], gr: "Gr. 27", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5141.jpg" },
+  { name: "Schuhe braun", farbe: "Braun", tags: ["braun","natur"], gr: "Gr. 18", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_4632.jpg" },
+  { name: "Schuhe braun", farbe: "Braun", tags: ["braun","natur"], gr: "Gr. 22", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_4636.jpg" },
+  { name: "Schuhe braun", farbe: "Braun", tags: ["braun","natur"], gr: "Gr. 23", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_4670.jpg" },
+  { name: "Schuhe braun", farbe: "Braun", tags: ["braun","natur"], gr: "Gr. 24", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_4650.jpg" },
+  { name: "Mädchenschuhe braun", farbe: "Braun", tags: ["braun","natur"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_4640.jpg" },
+  { name: "Schuhe Waldmotiv", farbe: "Natur", tags: ["braun","natur"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_4678.jpg" },
+  { name: "Schuhe Pilze", farbe: "Natur", tags: ["braun","natur"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_4673.jpg" },
+  { name: "Lederschuhe grün", farbe: "Grün", tags: ["grün","olive"], gr: "Gr. 24", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_4657.jpg" },
+  { name: "Schuhe gelb", farbe: "Gelb", tags: ["ocker","senf","amber"], gr: "Gr. 21", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_0983.jpg" },
+  { name: "Stiefel Vogel", farbe: "Natur/Braun", tags: ["braun","natur"], gr: "Gr. 27", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_9518.jpg" },
+  { name: "Stiefeletten", farbe: "Braun", tags: ["braun","karamell"], gr: "Gr. 31", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_9498.jpg" },
+  { name: "Kniestrümpfe", farbe: "Natur", tags: ["braun","natur","beige"], gr: "Gr. 31, 38", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/31f7006959c940b995c8462ef18dfee3-1.webp" },
+];
+
+// ── Accessoires ──
+const ACCESSOIRES = [
+  { name: "Hut creme", farbe: "Creme", tags: ["creme","weiß","beige"], gr: "M", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_9559.jpg" },
+  { name: "Hut braun", farbe: "Braun", tags: ["braun","karamell"], gr: "M", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_9560.jpg" },
+  { name: "Hut weiß", farbe: "Weiß", tags: ["weiß","creme"], gr: "M", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC04930.jpg" },
+  { name: "Puschelmütze", farbe: "Creme", tags: ["creme","beige"], gr: "Gr. 52, 56", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5283.jpg" },
+  { name: "Mützen creme", farbe: "Creme", tags: ["creme","beige"], gr: "Gr. 52, 54, 56", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5282.jpg" },
+  { name: "Mützen", farbe: "Versch. Farben", tags: ["rosa","creme","beige","altrosa"], gr: "Versch. Größen", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_4779.jpg" },
+  { name: "Zwergenmütze gelb", farbe: "Gelb", tags: ["ocker","senf","amber"], gr: "Versch. Größen", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_8840.jpg" },
+  { name: "Zwergenmütze grün", farbe: "Grün", tags: ["grün","olive"], gr: "Versch. Größen", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_8841.jpg" },
+  { name: "Kopftücher, Mützen, Schal", farbe: "Versch. Farben", tags: ["rosa","braun","creme","beige","rost"], gr: "Versch. Größen", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_4772.jpg" },
+];
+
+// ── Größen ──
+const SIZE_OPTS = {
+  Mama:      ["XS","S","M","L","XL","XXL"],
+  Papa:      ["S","M","L","XL","XXL","Gr. 42","Gr. 44","Gr. 46","Gr. 48","Gr. 50","Gr. 52"],
+  Kind:      ["Gr. 56","Gr. 62","Gr. 68","Gr. 74","Gr. 80","Gr. 86","Gr. 92","Gr. 98","Gr. 104","Gr. 110","Gr. 116","Gr. 122","Gr. 128","Gr. 134","Gr. 140","Gr. 146","Gr. 152","Gr. 158","Gr. 164"],
+  Schwanger: ["XS","S","M","L","XL","XXL"],
+  Baby:      ["Gr. 50","Gr. 56","Gr. 62","Gr. 68","Gr. 74","Gr. 80"],
+};
+
+// ── State ──
+let palette = null, stil = null, budget = null, persons = [], pid = 0;
+
+// ── Init ──
+document.addEventListener('DOMContentLoaded', () => {
+  buildPalettes();
+  document.querySelectorAll('.pill').forEach(p => p.addEventListener('click', () => {
+    document.querySelectorAll('.pill').forEach(x => x.classList.remove('selected'));
+    p.classList.add('selected');
+    stil = p.dataset.style;
+  }));
+});
+
+function buildPalettes() {
+  const g = document.getElementById('paletteGrid');
+  PALETTES.forEach((p, i) => {
+    const d = document.createElement('div');
+    d.className = 'palette-card';
+    d.onclick = () => { document.querySelectorAll('.palette-card').forEach(x=>x.classList.remove('selected')); d.classList.add('selected'); palette = PALETTES[i]; };
+    const sr = document.createElement('div'); sr.className = 'swatch-row';
+    p.colors.forEach(c => { const s = document.createElement('div'); s.className='swatch'; s.style.background=c; if(c==='#ffffff') s.style.border='1px solid #e0dbd5'; sr.appendChild(s); });
+    const lb = document.createElement('div'); lb.className='palette-name'; lb.textContent=p.name;
+    d.appendChild(sr); d.appendChild(lb); g.appendChild(d);
+  });
+}
+
+function selectBudget(el) {
+  document.querySelectorAll('.budget-card').forEach(x=>x.classList.remove('selected'));
+  el.classList.add('selected');
+  budget = parseInt(el.dataset.budget);
+}
+
+function addPerson(type) {
+  const id = ++pid;
+  persons.push({ id, type, size: SIZE_OPTS[type][2] || SIZE_OPTS[type][0] });
+  renderPersons();
+}
+
+function renderPersons() {
+  const list = document.getElementById('personsList');
+  list.innerHTML = '';
+  persons.forEach(p => {
+    const d = document.createElement('div'); d.className = 'person-row';
+    d.innerHTML = `<span class="person-tag">${p.type}</span>
+      <select onchange="persons.find(x=>x.id===${p.id}).size=this.value">
+        ${(SIZE_OPTS[p.type]||[]).map(s=>`<option value="${s}" ${s===p.size?'selected':''}>${s}</option>`).join('')}
+      </select>
+      <button class="remove-btn" onclick="persons=persons.filter(x=>x.id!==${p.id});renderPersons()">×</button>`;
+    list.appendChild(d);
+  });
+}
+
+// ── Helfer ──
+function colorMatch(tags, kw) {
+  return tags.some(t => kw.some(c => t.includes(c) || c.includes(t)));
+}
+
+function sizeLabel(gr) {
+  if (!gr) return '';
+  return 'Gr. ' + gr.replace(/^Gr\.\s*/i, '');
+}
+
+function accCard(item, delay=0) {
+  return `<div class="acc-card" style="animation-delay:${delay}s">
+    <img src="${item.img}" alt="${item.name}" loading="lazy" onerror="this.style.display='none'">
+    <div class="acc-body">
+      <div class="acc-name">${item.name}</div>
+      <div class="acc-farbe">${item.farbe}</div>
+      <div class="acc-size">${item.gr || ''}</div>
+    </div>
+  </div>`;
+}
+
+// ── Find Outfits ──
+async function findOutfits() {
+  if (!palette) { alert('Bitte eine Farbpalette wählen.'); return; }
+  const btn = document.getElementById('findBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Suche läuft …';
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  await new Promise(r => setTimeout(r, 400));
+
+  const kw = palette.keywords;
+  const wardrobeSection = document.getElementById('wardrobeSection');
+  const onlineSection = document.getElementById('onlineSection');
+  document.getElementById('tipsSection').innerHTML = '';
+  document.getElementById('actionRow').style.display = 'none';
+
+  // Wardrobe matches
+  let matches;
+  if (persons.length > 0) {
+    matches = [];
+    persons.forEach(p => {
+      if (p.type === 'Baby') return;
+      const m = WARDROBE.filter(w => w.kat.includes(p.type) && colorMatch(w.tags, kw));
+      if (m.length) matches.push({ person: p, items: m.slice(0, 6) });
+    });
+  } else {
+    const m = WARDROBE.filter(w => colorMatch(w.tags, kw));
+    matches = m.length ? [{ person: null, items: m }] : [];
+  }
+
+  const mSchuhe = SCHUHE.filter(s => colorMatch(s.tags, kw));
+  const mAcc = ACCESSOIRES.filter(a => colorMatch(a.tags, kw));
+  const hasWardrobe = matches.length > 0 || mSchuhe.length > 0 || mAcc.length > 0;
+
+  let html = '';
+  if (hasWardrobe) {
+    html += `<div class="results-title">Kundenkleiderschrank</div>`;
+    matches.forEach(({ person, items }) => {
+      if (person) html += `<p style="font-size:12px;color:var(--text-soft);letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px;">${person.type} · ${person.size}</p>`;
+      html += `<div class="card-grid">`;
+      items.forEach((w, i) => {
+        html += `<div class="wardrobe-card" style="animation-delay:${i*.06}s">
+          <img src="${w.img}" alt="${w.name}" loading="lazy" onerror="this.style.display='none'">
+          <div class="wc-body">
+            <div class="match-badge">Passt!</div>
+            <div class="wc-name">${w.name}</div>
+            <div class="wc-farbe">${w.farbe}</div>
+            <div class="wc-size">${sizeLabel(w.gr)}</div>
+          </div>
+        </div>`;
+      });
+      html += `</div>`;
+    });
+    if (mSchuhe.length) {
+      html += `<p style="font-family:'Fraunces',serif;font-size:18px;font-weight:400;margin:32px 0 16px;">Passende Schuhe</p><div class="acc-grid">`;
+      mSchuhe.forEach((s, i) => html += accCard(s, i*.04));
+      html += `</div>`;
+    }
+    if (mAcc.length) {
+      html += `<p style="font-family:'Fraunces',serif;font-size:18px;font-weight:400;margin:32px 0 16px;">Passende Hüte, Mützen & Accessoires</p><div class="acc-grid">`;
+      mAcc.forEach((a, i) => html += accCard(a, i*.04));
+      html += `</div>`;
+    }
+  }
+  wardrobeSection.innerHTML = html;
+
+  if (hasWardrobe) {
+    onlineSection.innerHTML = `<button class="online-btn" onclick="startOnlineSearch()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+      Weiter zur Internetsuche
+    </button>`;
+  } else {
+    await startOnlineSearch();
+  }
+
+  btn.disabled = false; btn.innerHTML = '✦ Outfits finden';
+}
+
+async function startOnlineSearch() {
+  const onlineSection = document.getElementById('onlineSection');
+  onlineSection.innerHTML = `<hr class="divider"><div class="results-title">Online-Outfits</div>
+    <div class="loading-bar"><div class="loading-progress"></div></div>
+    <p style="font-size:13px;color:var(--text-soft);">Passende Outfits aus DACH-Shops werden zusammengestellt …</p>`;
+
+  const personList = persons.length > 0
+    ? persons.map(p=>`${p.type} (Größe ${p.size})`).join(', ')
+    : 'Allgemein (typische Familie: Mama, Papa, Kind)';
+  const budgetInfo = budget ? `bis ${budget} €` : 'offen';
+  const stilInfo = stil || 'natürlich & zeitlos';
+
+  const prompt = `Du bist ein Outfit-Stylist für Familien-Fotoshootings. 
+Erstelle für jede Person einen konkreten Outfit-Vorschlag für ein Outdoor-Fotoshooting in DACH-Shops.
+
+Farbpalette: ${palette.name}
+Stil: ${stilInfo}
+Budget: ${budgetInfo} pro Person
+Personen: ${personList}
+
+Antworte NUR als JSON-Array, kein sonstiger Text, keine Markdown-Backticks:
+[{"person":"Mama (M)","items":[{"emoji":"👗","name":"Kleidname","beschreibung":"1 Satz Begründung","shops":[{"name":"Zara","url":"https://www.zara.com/de/"}]}]}]
+
+Regeln: max 3 Items pro Person, max 2 Shops pro Item, nur echte DACH-Shops (Zara, H&M, Mango, About You, Zalando, s.Oliver, Tom Tailor, Bonprix, Esprit, Street One, Marc O'Polo), keine Neonfarben, keine Blue Jeans.`;
+
+  try {
+    const res = await fetch('/api/suche', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: [{ role: 'user', content: prompt }] })
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+    const text = (data.content || []).filter(b=>b.type==='text').map(b=>b.text).join('');
+    const outfits = JSON.parse(text.replace(/```json|```/g,'').trim());
+    renderOnline(outfits);
+  } catch(e) {
+    onlineSection.innerHTML += `<div class="error-msg">Die Online-Suche konnte nicht abgeschlossen werden. Bitte versuche es erneut.<br><small>${e.message}</small></div>`;
+    renderTips();
+  }
+}
+
+function renderOnline(outfits) {
+  let html = `<hr class="divider"><div class="results-title">Online-Outfits</div>`;
+  outfits.forEach((o, i) => {
+    html += `<div class="person-block" style="animation-delay:${i*.1}s">
+      <div class="person-block-title">${o.person}</div>
+      <div class="person-block-sub">${[stil, budget?`bis ${budget} €`:''].filter(Boolean).join(' · ') || palette.name}</div>`;
+    (o.items||[]).forEach(item => {
+      html += `<div class="outfit-item">
+        <div class="outfit-icon">${item.emoji||'✦'}</div>
+        <div class="outfit-info">
+          <div class="outfit-name">${item.name}</div>
+          <div class="outfit-desc">${item.beschreibung}</div>
+          <div class="shop-links">${(item.shops||[]).map(s=>`<a class="shop-link" href="${s.url}" target="_blank">${s.name}</a>`).join('')}</div>
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+  document.getElementById('onlineSection').innerHTML = html;
+  renderTips();
+}
+
+function renderTips() {
+  const tips = [
+    `Stimmt die Farbpalette aufeinander ab – Nuancen wirken harmonischer als perfektes Matching.`,
+    `Keine großen Logos, auffällige Prints oder sehr feine Muster – das wirkt auf Fotos unruhig.`,
+    `Plant extra Zeit fürs Anziehen ein, besonders mit Kindern.`,
+  ];
+  const styleMap = {
+    "Boho & Natur": "Natürliche Materialien wie Leinen und Musselin unterstreichen den Boho-Look perfekt.",
+    "Romantisch & Verspielt": "Zarte Accessoires wie Haarblumen oder Stirnbänder runden das Outfit wunderschön ab.",
+    "Elegant & Zeitlos": "Weniger ist mehr – ein cleaner Look mit einem Statement-Stück wirkt zeitloser.",
+    "Rustikal & Warm": "Layering mit Strick und Jacken schafft Tiefe im Bild und hält warm.",
+    "Minimalistisch & Modern": "Saubere Linien und max. zwei Farben wirken auf Fotos besonders stark.",
+    "Dramatisch & Ausdrucksstark": "Kontraste zwischen fließend und strukturiert schaffen Spannung im Bild.",
+  };
+  if (stil && styleMap[stil]) tips.push(styleMap[stil]);
+  if (persons.some(p=>p.type==='Kind')) tips.push("Bei Kindern: bunte Jacken weglassen, lieber mehrere neutrale Schichten.");
+  if (persons.some(p=>p.type==='Baby')) tips.push("Babys: weiche, atmungsaktive Materialien in Naturweiß oder zartem Beige.");
+
+  document.getElementById('tipsSection').innerHTML = `
+    <div class="tips-block">
+      <div class="tips-title">Styling-Tipps für euer Shooting</div>
+      ${tips.map(t=>`<div class="tip-item"><div class="tip-dot"></div><div class="tip-text">${t}</div></div>`).join('')}
+    </div>`;
+  document.getElementById('actionRow').style.display = 'flex';
+}
+
+// ── Alle Kleider ──
+function showAllWardrobe() {
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.getElementById('onlineSection').innerHTML = '';
+  document.getElementById('tipsSection').innerHTML = '';
+  document.getElementById('actionRow').style.display = 'none';
+
+  let html = `<div class="results-title">Alle Kleider im Kleiderschrank</div><div class="card-grid">`;
+  WARDROBE.forEach((w, i) => {
+    html += `<div class="wardrobe-card" style="animation-delay:${i*.02}s">
+      <img src="${w.img}" alt="${w.name}" loading="lazy" onerror="this.style.display='none'">
+      <div class="wc-body">
+        <div class="wc-name">${w.name}</div>
+        <div class="wc-farbe">${w.farbe}</div>
+        <div class="wc-size">${sizeLabel(w.gr)}</div>
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  html += `<p style="font-family:'Fraunces',serif;font-size:22px;font-weight:300;margin:48px 0 20px;padding-bottom:12px;border-bottom:1px solid var(--border);">Schuhe</p><div class="acc-grid">`;
+  SCHUHE.forEach((s,i) => html += accCard(s, i*.03));
+  html += `</div>`;
+
+  html += `<p style="font-family:'Fraunces',serif;font-size:22px;font-weight:300;margin:48px 0 20px;padding-bottom:12px;border-bottom:1px solid var(--border);">Hüte, Mützen & Accessoires</p><div class="acc-grid">`;
+  ACCESSOIRES.forEach((a,i) => html += accCard(a, i*.03));
+  html += `</div>`;
+
+  document.getElementById('wardrobeSection').innerHTML = html;
+}
+
+// ── Copy ──
+function copyResults() {
+  const text = document.getElementById('results').innerText;
+  navigator.clipboard.writeText(text).then(() => showToast('Kopiert!'));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
