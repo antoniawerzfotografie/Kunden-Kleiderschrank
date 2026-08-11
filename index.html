@@ -90,6 +90,15 @@ main { max-width: 860px; margin: 0 auto; padding: 48px 24px 80px; }
 .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin-bottom: 40px; }
 .wardrobe-card { background: var(--white); border: 1px solid var(--border); border-radius: 2px; overflow: hidden; transition: transform .2s, box-shadow .2s; animation: fadeUp .35s ease both; }
 .wardrobe-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.07); }
+.carousel { position: relative; }
+.carousel img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
+.car-prev, .car-next { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,.85); border: none; font-size: 18px; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
+.car-prev { left: 6px; }
+.car-next { right: 6px; }
+.car-dots { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; }
+.car-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.6); cursor: pointer; transition: background .2s; }
+.car-dot.active { background: white; }
+
 .wardrobe-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
 .wc-body { padding: 12px 14px 14px; }
 .match-badge { display: inline-block; background: #f3ebe0; color: var(--brown); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 8px; border-radius: 100px; margin-bottom: 6px; }
@@ -172,7 +181,7 @@ main { max-width: 860px; margin: 0 auto; padding: 48px 24px 80px; }
   <div class="step">
     <div class="step-header">
       <span class="step-num">01</span>
-      <span class="step-title">Farbpalette wählen</span>
+      <span class="step-title">Farbpalette wählen <span class="optional">optional</span></span>
     </div>
     <div class="palette-grid" id="paletteGrid"></div>
   </div>
@@ -303,15 +312,15 @@ const PALETTES = [
 // ── Kleiderschrank ──
 const WARDROBE = [
   // Frauenkleider
-  { name: "Wild Spirit", farbe: "Weiß · Fließend", tags: ["weiß","creme"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/A7404352.jpg" },
-  { name: "Pure Soul Mix & Match", farbe: "Grün · Weiß", tags: ["grün","weiß","sage"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC4073sw.jpg" },
-  { name: "Agnes natur", farbe: "Beige · Natur", tags: ["beige","natur","creme"], kat: ["Mama","Schwanger"], gr: "S – L", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/IMG_5119.jpg" },
+  { name: "Wild Spirit", farbe: "Weiß · Fließend", tags: ["weiß","creme"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/A7404352.jpg", imgs: ["https://antoniawerzfotografie.com/wp-content/uploads/2026/05/A7404352.jpg","https://antoniawerzfotografie.com/wp-content/uploads/2026/05/fotiwaerch-8.jpg"] },
+  { name: "Pure Soul Mix & Match", farbe: "Grün · Weiß", tags: ["grün","weiß","sage"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC4073sw.jpg", imgs: ["https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC4073sw.jpg","https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSD03267.jpg","https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC07724.jpg","https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC4146.jpg"] },
+  { name: "Agnes natur", farbe: "Beige · Natur", tags: ["beige","natur","creme"], kat: ["Mama","Schwanger"], gr: "S – L", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/IMG_5119.jpg", imgs: ["https://antoniawerzfotografie.com/wp-content/uploads/2026/05/IMG_5119.jpg","https://antoniawerzfotografie.com/wp-content/uploads/2026/05/IMG_4129.jpg"] },
   { name: "Maria", farbe: "Creme · Beige", tags: ["creme","beige"], kat: ["Mama","Schwanger"], gr: "S – L", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC01987.jpg" },
   { name: "Kleid burgund", farbe: "Burgund", tags: ["burgund","weinrot","dunkelrot","beere"], kat: ["Mama"], gr: "S – M", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_9512.jpg" },
   { name: "Weltentänzer", farbe: "Rot", tags: ["rot","rost"], kat: ["Mama"], gr: "S – M", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5148.jpg" },
   { name: "Hosenanzug nude", farbe: "Nude", tags: ["nude","beige","creme"], kat: ["Mama"], gr: "S – L", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/06/DSC04184.jpg" },
-  { name: "Set White", farbe: "Weiß", tags: ["weiß","creme"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC04433_1.jpg" },
-  { name: "Strickpullover dunkelbraun", farbe: "Dunkelbraun", tags: ["braun","dunkelbraun"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5189.jpg" },
+  { name: "Set White", farbe: "Weiß", tags: ["weiß","creme"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC04433_1.jpg", imgs: ["https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC04433_1.jpg","https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC04213.jpg"] },
+  { name: "Strickpullover dunkelbraun", farbe: "Dunkelbraun", tags: ["braun","dunkelbraun"], kat: ["Mama","Schwanger"], gr: "Gr. 68", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5189.jpg" },
   // Frau & Babybauch
   { name: "Octavia", farbe: "Beige · Blumen", tags: ["beige","natur","creme"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC09641.jpg" },
   { name: "Leila", farbe: "Taupe · Grau", tags: ["grau","taupe"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/PB270049.jpg" },
@@ -325,21 +334,21 @@ const WARDROBE = [
   { name: "Aurora Blau", farbe: "Hellblau", tags: ["blau","hellblau","teal"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC08692.jpg" },
   { name: "Aria", farbe: "Dunkelgrün · Petrol", tags: ["grün","dunkelgrün","petrol","teal"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC03659.jpg" },
   { name: "Bella", farbe: "Orange", tags: ["orange","rost","terrakotta"], kat: ["Mama","Schwanger"], gr: "M – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/Katharina-Marina-Babybauch87.jpg" },
-  { name: "Helene rost", farbe: "Rost", tags: ["rost","orange"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5163.jpg" },
+  { name: "Helene rost", farbe: "Rost", tags: ["rost","orange"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5163.jpg", imgs: ["https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5163.jpg","https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC08723.jpg"] },
   { name: "Helene braun", farbe: "Karamell · Braun", tags: ["braun","karamell"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5162.jpg" },
   { name: "Helene grün", farbe: "Salbei · Grün", tags: ["grün","salbei","sage"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5164.jpg" },
   { name: "Helene creme", farbe: "Creme", tags: ["creme","weiß","beige"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5161.jpg" },
-  { name: "Betty", farbe: "Weiß · Spitze", tags: ["weiß","creme"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC03147.jpg" },
+  { name: "Betty", farbe: "Weiß · Spitze", tags: ["weiß","creme"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC03147.jpg", imgs: ["https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC03147.jpg","https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC06405.jpg"] },
   { name: "Alina", farbe: "Hellgrau · Blau", tags: ["grau","blau"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC00354.jpg" },
   { name: "Annika", farbe: "Rosa · Nude", tags: ["rosa","nude","altrosa"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC2773.jpg" },
   { name: "Celeste", farbe: "Gold", tags: ["gold","ocker","amber"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/aaa6a0bc-1c5f-44ba-94d1-f57d09c6c084.jpg" },
   { name: "Madlen", farbe: "Fließend · Beige", tags: ["beige","natur","creme"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5160.jpg" },
   { name: "Schlauchkleid dunkelgrün", farbe: "Dunkelgrün", tags: ["grün","dunkelgrün","petrol"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC3223.jpg" },
   { name: "Tüllkleid flieder", farbe: "Flieder", tags: ["flieder","rosa","lila","altrosa"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC2834.jpg" },
-  { name: "Tüll Braun", farbe: "Braun · Fließend", tags: ["braun","karamell"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/Antonia-Werz-Fotograf-Babybauch-Schwangeschaft-Shooting-87.jpg" },
+  { name: "Tüll Braun", farbe: "Braun · Fließend", tags: ["braun","karamell"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/Antonia-Werz-Fotograf-Babybauch-Schwangeschaft-Shooting-87.jpg", imgs: ["https://antoniawerzfotografie.com/wp-content/uploads/2026/05/Antonia-Werz-Fotograf-Babybauch-Schwangeschaft-Shooting-87.jpg","https://antoniawerzfotografie.com/wp-content/uploads/2026/05/B6994832-07FA-4AB9-B9FB-7B97B2173A10_L0_001-30.12.2024-23_52_39.jpg"] },
   { name: "Tüll Grau", farbe: "Grau", tags: ["grau","taupe"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/Antonia_Werz_Fotografie_Maternity_1.jpg" },
   { name: "Tüll Rot", farbe: "Rot", tags: ["rot","rost","beere"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_9021.jpg" },
-  { name: "Tüll Rosa", farbe: "Rosa · Nude", tags: ["rosa","nude","altrosa"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC01739.jpg" },
+  { name: "Tüll Rosa", farbe: "Rosa · Nude", tags: ["rosa","nude","altrosa"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC01739.jpg", imgs: ["https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC01739.jpg","https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC3624.jpg"] },
   { name: "Tüll Blau", farbe: "Navy Blau", tags: ["blau","navy","dunkelblau"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC03278.jpg" },
   { name: "Tüll Weiß", farbe: "Weiß", tags: ["weiß","creme"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC02739.jpg" },
   { name: "Tüll Apricot", farbe: "Apricot", tags: ["apricot","rosa","nude","altrosa"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_9023.jpg" },
@@ -362,7 +371,7 @@ const WARDROBE = [
   // Männer
   { name: "Hemd rubin", farbe: "Rubin", tags: ["rot","burgund","beere"], kat: ["Papa"], gr: "M", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5275.jpg" },
   { name: "Musselin Shirt dunkelbraun", farbe: "Dunkelbraun", tags: ["braun","dunkelbraun"], kat: ["Papa"], gr: "M", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_9977.jpg" },
-  { name: "Musselin Shirt creme", farbe: "Creme", tags: ["creme","weiß","beige"], kat: ["Papa"], gr: "M, L", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_9598.jpg" },
+  { name: "Musselin Shirt creme", farbe: "Creme", tags: ["creme","weiß","beige"], kat: ["Papa"], gr: "M, L", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_9598.jpg", imgs: ["https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_9598.jpg","https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_8403.jpg"] },
   { name: "Strickpulli stone Mann", farbe: "Stone", tags: ["grau","beige"], kat: ["Papa"], gr: "M", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5167.jpg" },
   { name: "Jacke khaki", farbe: "Khaki", tags: ["khaki","grün","olive"], kat: ["Papa"], gr: "L", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5278.jpg" },
   { name: "Jacke braun", farbe: "Braun", tags: ["braun"], kat: ["Papa"], gr: "Gr. 42", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/46b295353aac43b7b87fe9fb8392951d-1.webp" },
@@ -370,7 +379,7 @@ const WARDROBE = [
   // Kinder
   { name: "Ophelia", farbe: "Natur · Spitze", tags: ["weiß","creme","natur"], kat: ["Kind"], gr: "110/116, 122/128", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC02964.jpg" },
   { name: "Musselinkleid creme", farbe: "Creme", tags: ["creme","weiß","beige"], kat: ["Kind"], gr: "104", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC00764.jpg" },
-  { name: "Tüllkleid weiß", farbe: "Weiß", tags: ["weiß","creme"], kat: ["Kind"], gr: "92, 104", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC2814.jpg" },
+  { name: "Tüllkleid weiß", farbe: "Weiß", tags: ["weiß","creme"], kat: ["Kind"], gr: "92, 104", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC2814.jpg", imgs: ["https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC2814.jpg","https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC6974.jpg"] },
   { name: "Tüllkleid burgund", farbe: "Burgund", tags: ["burgund","weinrot","beere"], kat: ["Kind"], gr: "104", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC2807.jpg" },
   { name: "Veronika Kind", farbe: "Natur", tags: ["natur","beige","creme"], kat: ["Kind"], gr: "92", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC2804.jpg" },
   { name: "Leinenkleid sand", farbe: "Sand", tags: ["beige","sand","natur"], kat: ["Kind"], gr: "74", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5202.jpg" },
@@ -378,7 +387,7 @@ const WARDROBE = [
   { name: "Musselinkleid rost", farbe: "Rost", tags: ["rost","orange"], kat: ["Kind"], gr: "92", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/a1cff5bc-a0ef-418a-afc0-f769b0efebab.jpg" },
   { name: "Musselinkleid graublau", farbe: "Graublau", tags: ["grau","blau"], kat: ["Kind"], gr: "98", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_9526.jpg" },
   { name: "Musselinkleid hellgrün", farbe: "Hellgrün", tags: ["grün","salbei"], kat: ["Kind"], gr: "92", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_9525.jpg" },
-  { name: "Streifenkleid creme", farbe: "Creme/Weiß", tags: ["weiß","creme","beige"], kat: ["Kind"], gr: "122, 146", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/477c988395bb41f0bac82b094e208e87-1.webp" },
+  { name: "Streifenkleid creme", farbe: "Creme/Weiß", tags: ["weiß","creme","beige"], kat: ["Kind"], gr: "122, 146", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/477c988395bb41f0bac82b094e208e87-1.webp", imgs: ["https://antoniawerzfotografie.com/wp-content/uploads/2026/05/477c988395bb41f0bac82b094e208e87-1.webp","https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_9841.jpg"] },
   { name: "Cordkleid senf", farbe: "Senf", tags: ["ocker","senf","amber"], kat: ["Kind"], gr: "122/128", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5179.jpg" },
   { name: "Kleid braun", farbe: "Braun", tags: ["braun"], kat: ["Kind"], gr: "122/128", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5178.jpg" },
   { name: "Leinenkleid braun", farbe: "Braun", tags: ["braun","karamell"], kat: ["Kind"], gr: "110", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5196.jpg" },
@@ -387,6 +396,45 @@ const WARDROBE = [
   { name: "Strickkleid sand", farbe: "Sand", tags: ["beige","sand","natur"], kat: ["Kind"], gr: "104", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5199.jpg" },
   { name: "Wollkleid weiß", farbe: "Weiß", tags: ["weiß","creme"], kat: ["Kind"], gr: "62", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5211.jpg" },
   { name: "Kleid dunkelrot kariert", farbe: "Dunkelrot", tags: ["rot","dunkelrot","beere","burgund"], kat: ["Kind"], gr: "86", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5210.jpg" },
+  // Neue Kleider
+  { name: "Top Blue Dots", farbe: "Schwarz · Spitze", tags: ["dunkel","schwarz"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DSC03069.jpg" },
+  { name: "Trägerkleid burgund", farbe: "Burgund", tags: ["burgund","weinrot","beere"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/DEE228D8-6443-4541-B323-548509758FB3_L0_001-30.4.2026-15_07_36.jpg" },
+  { name: "Trägerkleid orange", farbe: "Orange", tags: ["orange","rost","terrakotta"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/15e08db1-5f7d-4ae0-8913-b77ddcfdf074.jpg" },
+  { name: "Kleid orange", farbe: "Orange", tags: ["orange","rost","terrakotta"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/A938340F-447E-4B39-801A-30C796DF4E33_L0_001-30.4.2026-15_19_17.jpg" },
+  { name: "Kleid beere", farbe: "Beere", tags: ["beere","burgund","weinrot"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5276.jpg" },
+  { name: "Seila", farbe: "Rost · Orange", tags: ["rost","orange","terrakotta"], kat: ["Mama","Schwanger"], gr: "S – XL", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_8402.jpg" },
+  // Jacken & Westen Kind
+  { name: "Cordjacke braun Kind", farbe: "Braun", tags: ["braun","karamell"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_4692.jpg" },
+  { name: "Cordjacke braun", farbe: "Braun", tags: ["braun","karamell"], kat: ["Kind"], gr: "", imgs: ["https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_4701.jpg","https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5144.jpg"], img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_4701.jpg" },
+  { name: "Musselinjacke braun", farbe: "Braun", tags: ["braun","natur"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_4704.jpg" },
+  { name: "Musselinjacke gelb", farbe: "Gelb", tags: ["ocker","senf","amber"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5218.jpg" },
+  { name: "Zipfeljacke rost", farbe: "Rost", tags: ["rost","orange"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_4711.jpg" },
+  { name: "Plüschjacke creme", farbe: "Creme", tags: ["creme","weiß","beige"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_4691.jpg" },
+  { name: "Plüschmantel khaki", farbe: "Khaki", tags: ["khaki","grün","olive"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5145.jpg" },
+  { name: "Plüschweste creme", farbe: "Creme", tags: ["creme","weiß","beige"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5279.jpg" },
+  { name: "Plüschweste khaki", farbe: "Khaki", tags: ["khaki","grün","olive"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_4682.jpg" },
+  { name: "Lederweste braun", farbe: "Braun", tags: ["braun","karamell"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_4687.jpg" },
+  // Pullover & Strick Kind
+  { name: "Strickjacke gelb", farbe: "Gelb", tags: ["ocker","senf","amber"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_9801.jpg" },
+  { name: "Strickweste creme", farbe: "Creme", tags: ["creme","weiß","beige"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5191.jpg" },
+  { name: "Strickweste rosa", farbe: "Rosa", tags: ["rosa","altrosa","nude"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_9523.jpg" },
+  { name: "Pilzweste", farbe: "Natur", tags: ["braun","natur","beige"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5485.jpg" },
+  { name: "Strickjacke senf", farbe: "Senf", tags: ["ocker","senf","amber"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5212.jpg" },
+  { name: "Strickjacke rost", farbe: "Rost", tags: ["rost","orange"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5219.jpg" },
+  { name: "Strickpulli braun/weiß", farbe: "Braun/Weiß", tags: ["braun","weiß","creme"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5194.jpg" },
+  { name: "Strickpulli grün", farbe: "Grün", tags: ["grün","salbei"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5201.jpg" },
+  { name: "Strickpullover creme", farbe: "Creme", tags: ["creme","weiß","beige"], kat: ["Kind"], gr: "", imgs: ["https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5192.jpg","https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5193.jpg"], img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5192.jpg" },
+  { name: "Strickpullover senf", farbe: "Senf", tags: ["ocker","senf","amber"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5190.jpg" },
+  { name: "Strickpullover rot", farbe: "Rot", tags: ["rot","rost","beere"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5277.jpg" },
+  { name: "Strickpullover grün/weiß", farbe: "Grün/Weiß", tags: ["grün","weiß","creme"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5280.jpg" },
+  { name: "Pilzpullover", farbe: "Natur", tags: ["braun","natur","beige"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5284.jpg" },
+  { name: "Weihnachtspullover", farbe: "Natur", tags: ["braun","natur","creme"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5200.jpg" },
+  { name: "Weihnachtspullover Zuckerstange", farbe: "Rot/Weiß", tags: ["rot","weiß","creme"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5208.jpg" },
+  // Hemden Kind
+  { name: "Cordhemd", farbe: "Braun", tags: ["braun","karamell"], kat: ["Kind"], gr: "", imgs: ["https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5143.jpg","https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5142.jpg"], img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5143.jpg" },
+  { name: "Hemd kariert khaki", farbe: "Khaki", tags: ["khaki","grün","olive"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5203.jpg" },
+  { name: "Cordhemd braun", farbe: "Braun", tags: ["braun","karamell"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5204.jpg" },
+  { name: "Cordhemd grün", farbe: "Grün", tags: ["grün","olive","khaki"], kat: ["Kind"], gr: "", img: "https://antoniawerzfotografie.com/wp-content/uploads/2026/05/img_5205.jpg" },
 ];
 
 // ── Schuhe ──
@@ -516,16 +564,62 @@ function accCard(item, delay=0) {
   </div>`;
 }
 
+function wardrobeCard(w, i, showBadge=false) {
+  const allImgs = w.imgs || [w.img];
+  const id = 'wc_' + Math.random().toString(36).substr(2,8);
+  let imgHtml = '';
+  if (allImgs.length > 1) {
+    imgHtml = `<div class="carousel" id="${id}">
+      ${allImgs.map((src,idx) => `<img src="${src}" alt="${w.name}" loading="lazy" style="display:${idx===0?'block':'none'}" onerror="this.style.display='none'">`).join('')}
+      <button class="car-prev" onclick="carNav('${id}',-1)">‹</button>
+      <button class="car-next" onclick="carNav('${id}',1)">›</button>
+      <div class="car-dots">${allImgs.map((_,idx)=>`<span class="car-dot${idx===0?' active':''}" onclick="carGo('${id}',${idx})"></span>`).join('')}</div>
+    </div>`;
+  } else {
+    imgHtml = `<img src="${w.img}" alt="${w.name}" loading="lazy" onerror="this.style.display='none'">`;
+  }
+  return `<div class="wardrobe-card" style="animation-delay:${i*.06}s">
+    ${imgHtml}
+    <div class="wc-body">
+      ${showBadge ? '<div class="match-badge">Passt!</div>' : ''}
+      <div class="wc-name">${w.name}</div>
+      <div class="wc-farbe">${w.farbe}</div>
+      <div class="wc-size">${sizeLabel(w.gr)}</div>
+    </div>
+  </div>`;
+}
+
+function carNav(id, dir) {
+  const el = document.getElementById(id);
+  const imgs = el.querySelectorAll('img');
+  const dots = el.querySelectorAll('.car-dot');
+  let cur = [...imgs].findIndex(i => i.style.display !== 'none');
+  imgs[cur].style.display = 'none';
+  dots[cur].classList.remove('active');
+  cur = (cur + dir + imgs.length) % imgs.length;
+  imgs[cur].style.display = 'block';
+  dots[cur].classList.add('active');
+}
+
+function carGo(id, idx) {
+  const el = document.getElementById(id);
+  const imgs = el.querySelectorAll('img');
+  const dots = el.querySelectorAll('.car-dot');
+  imgs.forEach(i => i.style.display='none');
+  dots.forEach(d => d.classList.remove('active'));
+  imgs[idx].style.display = 'block';
+  dots[idx].classList.add('active');
+}
+
 // ── Find Outfits ──
 async function findOutfits() {
-  if (!palette) { alert('Bitte eine Farbpalette wählen.'); return; }
   const btn = document.getElementById('findBtn');
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Suche läuft …';
   document.getElementById('results').style.display = 'block';
   document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
   await new Promise(r => setTimeout(r, 400));
 
-  const kw = palette.keywords;
+  const kw = palette ? palette.keywords : null;
   const wardrobeSection = document.getElementById('wardrobeSection');
   const onlineSection = document.getElementById('onlineSection');
   document.getElementById('tipsSection').innerHTML = '';
@@ -537,16 +631,16 @@ async function findOutfits() {
     matches = [];
     persons.forEach(p => {
       if (p.type === 'Baby') return;
-      const m = WARDROBE.filter(w => w.kat.includes(p.type) && colorMatch(w.tags, kw));
+      const m = WARDROBE.filter(w => w.kat.includes(p.type) && (!kw || colorMatch(w.tags, kw)));
       if (m.length) matches.push({ person: p, items: m.slice(0, 6) });
     });
   } else {
-    const m = WARDROBE.filter(w => colorMatch(w.tags, kw));
+    const m = kw ? WARDROBE.filter(w => colorMatch(w.tags, kw)) : WARDROBE;
     matches = m.length ? [{ person: null, items: m }] : [];
   }
 
-  const mSchuhe = SCHUHE.filter(s => colorMatch(s.tags, kw));
-  const mAcc = ACCESSOIRES.filter(a => colorMatch(a.tags, kw));
+  const mSchuhe = kw ? SCHUHE.filter(s => colorMatch(s.tags, kw)) : SCHUHE;
+  const mAcc = kw ? ACCESSOIRES.filter(a => colorMatch(a.tags, kw)) : ACCESSOIRES;
   const hasWardrobe = matches.length > 0 || mSchuhe.length > 0 || mAcc.length > 0;
 
   let html = '';
@@ -555,17 +649,7 @@ async function findOutfits() {
     matches.forEach(({ person, items }) => {
       if (person) html += `<p style="font-size:12px;color:var(--text-soft);letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px;">${person.type} · ${person.size}</p>`;
       html += `<div class="card-grid">`;
-      items.forEach((w, i) => {
-        html += `<div class="wardrobe-card" style="animation-delay:${i*.06}s">
-          <img src="${w.img}" alt="${w.name}" loading="lazy" onerror="this.style.display='none'">
-          <div class="wc-body">
-            <div class="match-badge">Passt!</div>
-            <div class="wc-name">${w.name}</div>
-            <div class="wc-farbe">${w.farbe}</div>
-            <div class="wc-size">${sizeLabel(w.gr)}</div>
-          </div>
-        </div>`;
-      });
+      items.forEach((w, i) => { html += wardrobeCard(w, i, true); });
       html += `</div>`;
     });
     if (mSchuhe.length) {
@@ -581,13 +665,18 @@ async function findOutfits() {
   }
   wardrobeSection.innerHTML = html;
 
-  if (hasWardrobe) {
-    onlineSection.innerHTML = `<button class="online-btn" onclick="startOnlineSearch()">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
-      Weiter zur Internetsuche
-    </button>`;
+  if (palette) {
+    if (hasWardrobe) {
+      onlineSection.innerHTML = `<button class="online-btn" onclick="startOnlineSearch()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+        Weiter zur Internetsuche
+      </button>`;
+    } else {
+      await startOnlineSearch();
+    }
   } else {
-    await startOnlineSearch();
+    onlineSection.innerHTML = '';
+    renderTips();
   }
 
   btn.disabled = false; btn.innerHTML = '✦ Outfits finden';
@@ -604,13 +693,14 @@ async function startOnlineSearch() {
     : 'Allgemein (typische Familie: Mama, Papa, Kind)';
   const budgetInfo = budget ? `bis ${budget} €` : 'offen';
   const stilInfo = stil || 'natürlich & zeitlos';
+  const paletteInfo = palette ? palette.name : 'keine Vorgabe – natürliche, harmonische Farben wählen';
   const jahreszeitInfo = jahreszeit || 'keine Angabe';
-  const locationInfo = shootingLocation || "keine Angabe";
+  const locationInfo = shootingLocation || 'keine Angabe';
 
   const prompt = `Du bist ein Outfit-Stylist für Familien-Fotoshootings. 
 Erstelle für jede Person einen konkreten Outfit-Vorschlag für ein Outdoor-Fotoshooting in DACH-Shops.
 
-Farbpalette: ${palette.name}
+Farbpalette: ${paletteInfo}
 Stil: ${stilInfo}
 Jahreszeit: ${jahreszeitInfo}
 Location: ${locationInfo}
@@ -698,16 +788,7 @@ function showAllWardrobe() {
   document.getElementById('actionRow').style.display = 'none';
 
   let html = `<div class="results-title">Alle Kleider im Kleiderschrank</div><div class="card-grid">`;
-  WARDROBE.forEach((w, i) => {
-    html += `<div class="wardrobe-card" style="animation-delay:${i*.02}s">
-      <img src="${w.img}" alt="${w.name}" loading="lazy" onerror="this.style.display='none'">
-      <div class="wc-body">
-        <div class="wc-name">${w.name}</div>
-        <div class="wc-farbe">${w.farbe}</div>
-        <div class="wc-size">${sizeLabel(w.gr)}</div>
-      </div>
-    </div>`;
-  });
+  WARDROBE.forEach((w, i) => { html += wardrobeCard(w, i, false); });
   html += `</div>`;
 
   html += `<p style="font-family:'Fraunces',serif;font-size:22px;font-weight:300;margin:48px 0 20px;padding-bottom:12px;border-bottom:1px solid var(--border);">Schuhe</p><div class="acc-grid">`;
